@@ -8,3 +8,6 @@ __pycache__/
 .venv/
 .env
 .DS_Store
+
+# Regenerated star-schema extracts (raw inputs remain excluded above)
+powerbi/exports/*.csv
