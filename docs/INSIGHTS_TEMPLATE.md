@@ -5,14 +5,14 @@
 
 ## Portfolio snapshot
 
-Populate from executed SQL results after profiling the real dataset.
+Populated from the executed training-data queries. Amounts are in the source dataset's monetary units; currency metadata was not assumed.
 
-- Loans in analysis: [value]
-- Defaults: [value]
-- Portfolio default rate: [value]
-- Total funded exposure: [value and definition]
-- Exposure associated with defaults: [value and definition]
-- Disbursal date range: [start] to [end]
+- Loans in analysis: **233,154**
+- Defaults: **50,611**
+- Portfolio default rate: **21.71%**
+- Total funded exposure: **12,673,550,469** (sum of disbursed_amount)
+- Exposure associated with defaults: **2,847,904,953** (original disbursed principal on labeled defaults; not outstanding balance or loss)
+- Disbursal date range: **2018-08-01 to 2018-10-31**
 
 ## Three key findings
 
