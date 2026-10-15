@@ -23,7 +23,8 @@ class SQLIntegrationTests(unittest.TestCase):
             for path in sorted((ROOT / 'sql').rglob('*.sql')):
                 relative = path.relative_to(ROOT).as_posix()
                 if relative.startswith('sql/03_analysis/questions/'):
-                    self.assertTrue(path.read_text().lstrip().startswith('/*'))
+                    question_text = path.read_text().strip()
+                    self.assertTrue(question_text.startswith('/*') and question_text.endswith('*/'))
                     continue
                 if relative not in executed:
                     connection.execute(path.read_text())

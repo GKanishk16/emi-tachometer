@@ -1,29 +1,42 @@
 -- EMI Tachometer | Author: Kanishk Gupta
 -- PRODUCT DECISION: Kanishk to justify
--- These illustrative, rule-based thresholds are analytical starting points only.
--- Validate stability, fairness, expected capacity, and economics before product use.
--- Priority is Very High, then High, then Medium; otherwise Low.
--- Very High: LTV >= 90% AND (bureau score < 300 / no score OR >= 2 recent delinquencies).
--- High: LTV >= 90% OR (bureau score < 500 / no score AND >= 1 recent delinquency).
--- Medium: LTV >= 80% OR bureau score < 700 OR >= 1 recent delinquency.
--- Missing bureau score is treated as thin/no score, not as a numeric zero risk.
+-- Illustrative rule-based thresholds only; validate stability, fairness, capacity,
+-- and economics before any product use. Priority is Very High, High, Medium, then Low.
+-- Missing bureau score is treated as thin/no score rather than a valid low score.
 CREATE OR REPLACE VIEW segmented_loans AS
+WITH product_cutoffs AS (
+    -- The only location for numeric cutoffs used by operational segment rules.
+    SELECT 90::DECIMAL AS very_high_ltv_pct,
+           80::DECIMAL AS medium_ltv_pct,
+           300::INTEGER AS very_low_bureau_score,
+           500::INTEGER AS low_bureau_score,
+           700::INTEGER AS medium_bureau_score,
+           0::INTEGER AS no_score_value,
+           2::INTEGER AS very_high_delinquency_min,
+           1::INTEGER AS delinquency_min
+)
 SELECT
-    *,
+    loans.*,
     CASE
-        WHEN ltv_pct >= 90
-         AND (bureau_score = 0 OR bureau_score < 300 OR delinquent_accounts_6m >= 2)
+        WHEN loans.ltv_pct >= cutoffs.very_high_ltv_pct
+         AND (loans.bureau_score = cutoffs.no_score_value
+              OR loans.bureau_score < cutoffs.very_low_bureau_score
+              OR loans.delinquent_accounts_6m >= cutoffs.very_high_delinquency_min)
             THEN 'Very High'
-        WHEN ltv_pct >= 90
-          OR ((bureau_score = 0 OR bureau_score < 500) AND delinquent_accounts_6m >= 1)
+        WHEN loans.ltv_pct >= cutoffs.very_high_ltv_pct
+          OR ((loans.bureau_score = cutoffs.no_score_value
+               OR loans.bureau_score < cutoffs.low_bureau_score)
+              AND loans.delinquent_accounts_6m >= cutoffs.delinquency_min)
             THEN 'High'
-        WHEN ltv_pct >= 80
-          OR (bureau_score > 0 AND bureau_score < 700)
-          OR delinquent_accounts_6m >= 1
+        WHEN loans.ltv_pct >= cutoffs.medium_ltv_pct
+          OR (loans.bureau_score > cutoffs.no_score_value
+              AND loans.bureau_score < cutoffs.medium_bureau_score)
+          OR loans.delinquent_accounts_6m >= cutoffs.delinquency_min
             THEN 'Medium'
         ELSE 'Low'
     END AS risk_segment
-FROM fact_loans;
+FROM fact_loans AS loans
+CROSS JOIN product_cutoffs AS cutoffs;
 
 -- Final output: segment volume, funded exposure and observed default rate.
 SELECT
