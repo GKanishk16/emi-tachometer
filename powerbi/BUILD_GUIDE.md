@@ -10,6 +10,8 @@
 4. Sort `dim_segment[segment_name]` by `dim_segment[segment_order]`; use the DAX measures in `DAX_MEASURES.md`.
 5. The source contains IDs only for branch, state, and manufacturer. Display those IDs as labels unless you obtain an authorized lookup table.
 
+Open `dashboard_preview.html` in a browser for a quick, local view of the same three page themes and current aggregated results. It is a preview, not a Power BI `.pbix` file.
+
 ## Page 1 — Portfolio Overview
 
 - KPI cards: loan count, default count, default rate, exposure, exposure at risk.

@@ -20,7 +20,7 @@ python -m pip install -r requirements.txt
 python run_all.py
 ```
 
-The run refreshes `docs/DATA_DICTIONARY.md`, builds a local `emi_tachometer.duckdb`, and regenerates the Power BI star-schema extracts in `powerbi/exports/`. To refresh the schema profile independently, run `python src/profile_data.py`.
+The run refreshes `docs/DATA_DICTIONARY.md`, builds a local `emi_tachometer.duckdb`, regenerates the Power BI star-schema extracts in `powerbi/exports/`, and refreshes a browser-viewable 3-page dashboard preview at `powerbi/dashboard_preview.html`. To refresh the schema profile independently, run `python src/profile_data.py`.
 
 The project deliberately profiles the actual files before making schema assumptions:
 
@@ -35,7 +35,7 @@ This writes `docs/DATA_DICTIONARY.md` with observed column names, pandas dtypes,
 - Python 3.11+ orchestrates local runs; pandas handles CSV profiling and Power BI exports.
 - DuckDB stores the project in a single ignored `.duckdb` file.
 - Readable, commented standalone DuckDB SQL owns staging, cleaning, analysis, and rule-based segment logic.
-- Power BI consumes star-schema CSV exports and documented DAX measures.
+- Power BI consumes star-schema CSV exports and documented DAX measures; a lightweight HTML preview provides a runnable visual without claiming to be a `.pbix` file.
 
 ## Tests and optional baseline
 

@@ -3,6 +3,13 @@
 -- Illustrative rule-based thresholds only; validate stability, fairness, capacity,
 -- and economics before any product use. Priority is Very High, High, Medium, then Low.
 -- Missing bureau score is treated as thin/no score rather than a valid low score.
+-- Rationale: 80/90 LTV and 300/500/700 score breakpoints match the analytical bands.
+-- In the labeled sample, 80-<90 LTV is 25.88% default vs 16.15% below 70%;
+-- 90%+ is 22.64% on only 1,219 loans, so the upper-LTV relationship is not monotonic.
+-- Score 300-499 is 29.32%, 700+ is 15.79%, but <300 is 21.53%; do not use score alone.
+-- One/two recent delinquent accounts distinguish any from multiple signals; these are
+-- account counts, not a timed payment history. Treat all cutoffs as hypotheses to validate.
+-- See docs/SEGMENT_DECISION_NOTE.md for the full product rationale and observed outcomes.
 CREATE OR REPLACE VIEW segmented_loans AS
 WITH product_cutoffs AS (
     -- The only location for numeric cutoffs used by operational segment rules.

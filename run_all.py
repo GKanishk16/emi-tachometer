@@ -3,7 +3,8 @@
 from pathlib import Path
 import duckdb
 from src.export_powerbi import export_all
-from src.profile_data import profile_file, write_dictionary
+from src.profile_data import write_dictionary
+from src.build_dashboard_preview import build as build_dashboard_preview
 
 ROOT = Path(__file__).resolve().parent
 DB_PATH = ROOT / 'emi_tachometer.duckdb'
@@ -28,6 +29,7 @@ def main() -> None:
                          'sql/02_clean/01_build_fact_loans.sql', 'sql/04_segments/01_risk_segments.sql'):
             run_sql(connection, sql_path)
         export_all(connection, ROOT / 'powerbi' / 'exports')
+        build_dashboard_preview(connection)
     finally:
         connection.close()
     print(f'Build complete: {DB_PATH}')
